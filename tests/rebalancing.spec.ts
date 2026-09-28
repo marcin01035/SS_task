@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { RebalancingCalculator } from '../src/RebalancingCalculator';
 import { SecurityPosition, RebalanceConfig } from '../src/rebalancing.types';
+import { baselinePortfolio, buildTwoSecurityPortfolio } from './fixtures';
 
 /**
  * Automated regression suite for the Portfolio Rebalancing Engine.
@@ -12,45 +13,8 @@ import { SecurityPosition, RebalanceConfig } from '../src/rebalancing.types';
  * a manual scenario to its automated test directly by ID.
  *
  * These tests exercise pure calculation logic and do not require a browser page.
+ * Shared portfolio fixtures live in `./fixtures.ts`.
  */
-
-const baselinePortfolio: SecurityPosition[] = [
-  { ticker: 'IBM', targetPct: 20, currentPct: 10, targetVariancePct: -10, unitPrice: 150 },
-  { ticker: 'MSFT', targetPct: 20, currentPct: 20, targetVariancePct: 0, unitPrice: 90 },
-  { ticker: 'ORCL', targetPct: 20, currentPct: 30, targetVariancePct: 10, unitPrice: 220 },
-  { ticker: 'AAPL', targetPct: 20, currentPct: 20, targetVariancePct: 0, unitPrice: 450 },
-  { ticker: 'HD', targetPct: 20, currentPct: 20, targetVariancePct: 0, unitPrice: 70 },
-];
-
-/**
- * Builds a valid 2-security portfolio where the "subject" security has the given
- * currentPct/targetPct, and a "filler" security absorbs the remainder so both the
- * Current % and Target % totals still sum to 100% (a portfolio-level requirement).
- * Used for single-security lifecycle scenarios (liquidation, new entry, etc.).
- */
-function buildTwoSecurityPortfolio(subject: {
-  ticker: string;
-  currentPct: number;
-  targetPct: number;
-  unitPrice: number;
-}): SecurityPosition[] {
-  return [
-    {
-      ticker: subject.ticker,
-      currentPct: subject.currentPct,
-      targetPct: subject.targetPct,
-      targetVariancePct: subject.currentPct - subject.targetPct,
-      unitPrice: subject.unitPrice,
-    },
-    {
-      ticker: 'FILLER',
-      currentPct: 100 - subject.currentPct,
-      targetPct: 100 - subject.targetPct,
-      targetVariancePct: (100 - subject.currentPct) - (100 - subject.targetPct),
-      unitPrice: 100,
-    },
-  ];
-}
 
 test.describe('Critical Priority', () => {
   test('TC-MAN-001: Baseline Portfolio Rebalancing (fractional mode)', () => {

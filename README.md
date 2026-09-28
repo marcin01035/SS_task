@@ -35,6 +35,7 @@ npx playwright install chromium   # downloads the chromium browser binary (Playw
 | `src/RebalanceValidator.ts`        | All input validation, called once by the engine before it calculates anything.                          |
 | `testScenarios.md`                 | **Manual** test cases (functional + boundary/negative), assumptions, and test data matrix.              |
 | `tests/rebalancing.spec.ts`        | **Automated** test cases (Playwright/TypeScript) — the coded, runnable version of the manual scenarios. |
+| `tests/fixtures.ts`                | Shared test data (baseline portfolio, portfolio builder helper) used by `rebalancing.spec.ts`. |
 | `.github/workflows/playwright.yml` | CI workflow — runs the automated suite (chromium only) on every push/PR.                                |
 | `tsconfig.json` / `package.json`   | TypeScript + npm configuration.                                                                         |
 
